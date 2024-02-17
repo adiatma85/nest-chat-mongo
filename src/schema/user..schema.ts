@@ -22,6 +22,10 @@ export class User {
 
     @Prop({ required: true, default: false })
     isAdmin: boolean;
+
+    public async matchPassword(enteredPassword: string) : Promise<boolean> {
+        return await bcrypt.compare(enteredPassword, this.password);
+    }
 }
 
 export type UserDocument = HydratedDocument<User>;
