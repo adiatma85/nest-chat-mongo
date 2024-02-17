@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { UserService } from './user.service';
-import { UserController } from './user.controller';
+import { AuthController } from './auth.controller';
+import { UserService } from 'src/user/user.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from 'src/schema/user..schema';
 
@@ -10,8 +10,7 @@ import { User, UserSchema } from 'src/schema/user..schema';
       { name: User.name, schema: UserSchema },
     ]),
   ],
-  providers: [UserService],
-  controllers: [UserController],
-  exports: [UserService],
+  controllers: [AuthController],
+  providers : [UserService],
 })
-export class UserModule {}
+export class AuthModule {}

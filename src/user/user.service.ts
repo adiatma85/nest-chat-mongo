@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { User } from 'src/schema/user..schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { UserCreateDto, UserLoginDto } from './dto/user.query.dto';
+import { UserCreateDto, UserLoginDto, UserQueryDto, UserUpdateDto } from './dto/user.query.dto';
 import { UsersProfile } from './interfaces/user.interfaces';
 
 @Injectable()
@@ -46,4 +46,18 @@ export class UserService {
             .exec();
     }
 
+
+    // Will return error if user not found
+    // Will return updated user entry if success
+    public async update(param : UserQueryDto, userUpdateDto: UserUpdateDto) {
+        const user = await this.userModel.updateMany(param, { $set: userUpdateDto })
+
+        return user
+    }
+
+    public async delete(param: UserQueryDto) {
+        const user = await this.userModel.deleteMany(param);
+
+        return user
+    }
 }

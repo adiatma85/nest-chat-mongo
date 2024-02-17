@@ -23,7 +23,7 @@ export class User {
     @Prop({ required: true, default: false })
     isAdmin: boolean;
 
-    public async matchPassword(enteredPassword: string) : Promise<boolean> {
+    public async matchPassword(enteredPassword: string): Promise<boolean> {
         return await bcrypt.compare(enteredPassword, this.password);
     }
 }
@@ -46,3 +46,10 @@ UserSchema.pre("save", async function (next) {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
 });
+
+// Add the toJSON method to the prototype of the UserDocument
+UserSchema.methods.toJSON = function() {
+    const obj = this.toObject();
+    delete obj.password;
+    return obj;
+};

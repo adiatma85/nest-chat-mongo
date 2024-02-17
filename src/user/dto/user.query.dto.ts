@@ -1,8 +1,12 @@
 import { IsString, IsEmail, IsOptional } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, PartialType } from '@nestjs/swagger';
 
 // Need to filtering name and email attribute on model schema mongodb
 export class UserQueryDto {
+    @IsString()
+    @IsOptional()
+    id?: string;
+    
     @IsString()
     @IsOptional()
     name?: string;
@@ -10,6 +14,10 @@ export class UserQueryDto {
     @IsEmail()
     @IsOptional()
     email?: string;
+
+    constructor(init?: Partial<UserQueryDto>) {
+        Object.assign(this, init);
+    }
 }
 
 // DTO class for Creating User
@@ -30,6 +38,10 @@ export class UserCreateDto {
     @IsOptional()
     @ApiProperty()
     pic?: string;
+
+    constructor(init?: Partial<UserCreateDto>) {
+        Object.assign(this, init);
+    }
 }
 
 // DTO Class for Login User
@@ -41,4 +53,20 @@ export class UserLoginDto {
     @IsString()
     @ApiProperty()
     password: string;
+
+    constructor(init?: Partial<UserLoginDto>) {
+        Object.assign(this, init);
+    }
+}
+
+export class UserUpdateDto extends PartialType(UserCreateDto) {
+    @IsString()
+    @IsOptional()
+    id?: string;
+}
+
+export class UserDeleteDto extends PartialType(UserCreateDto) {
+    @IsString()
+    @IsOptional()
+    _id?: string;
 }
