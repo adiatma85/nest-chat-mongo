@@ -12,8 +12,6 @@ export class UserController {
     public async findAll(
         @Query('search') search?: string
     ) {
-        // This function does not have any validation
-        // This function does not proper error handling
         return await this.userService.findAll(search);
     }
 
