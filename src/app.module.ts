@@ -6,6 +6,12 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { ChatModule } from './chat/chat.module';
+import { JwtModule } from '@nestjs/jwt';
+
+
+// Environment variables
+let jwtSecret : string
+let mongoDBUri : string
 
 @Module({
   imports: [
@@ -17,10 +23,15 @@ import { ChatModule } from './chat/chat.module';
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
-        uri: configService.get<string>('MONGODB_URI'),
-        useNewUrlParser: true,
+        uri: mongoDBUri,
       }),
       inject: [ConfigService],
+
+    }),
+    JwtModule.register({
+      global: true,
+      secret: jwtSecret || "secret",
+      signOptions: { expiresIn: '7d' },
     }),
     UserModule,
     AuthModule,
@@ -29,4 +40,11 @@ import { ChatModule } from './chat/chat.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  
+  // Constructor to assign environment variables
+  constructor() {
+    jwtSecret = process.env.JWT_SECRET
+    mongoDBUri = process.env.MONGODB_URI
+  }
+}
