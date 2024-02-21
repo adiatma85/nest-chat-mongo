@@ -6,7 +6,7 @@ export class AddContextAttribute implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
     console.log('Request...');
 
-    // Log sudah jalan di sini
+    // We will adding logic to add new context keys to the request object here
     next();
   }
 }
