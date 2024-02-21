@@ -1,7 +1,9 @@
-import { Controller, Get, Post, Query, Body, BadRequestException, Patch, Delete, Param } from '@nestjs/common';
+import { Controller, Get, Query, Body, Patch, Delete, Param, Req } from '@nestjs/common';
 import { UserService } from './user.service';
-import { UserCreateDto, UserDeleteDto, UserLoginDto, UserQueryDto, UserUpdateDto } from './dto/user.query.dto';
+import { UserQueryDto, UserUpdateDto } from './dto/user.query.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { Request } from 'express';
+import { ResponseService } from 'src/common/response.util';
 
 @ApiTags('users')
 @Controller('v1/user')
@@ -29,7 +31,7 @@ export class UserController {
 
     // Delete by id
     @Delete(":id")
-    public async delete(@Param('id') id : string) {
+    public async delete(@Param('id') id: string) {
         const buildParam = new UserQueryDto(
             {
                 id
@@ -37,5 +39,14 @@ export class UserController {
         );
 
         return this.userService.delete(buildParam);
+    }
+
+    // Testing for path
+    @Get('ptesting')
+    async getData(@Req() request: Request) {
+        const path = request.path; // This will give you the path that was accessed
+        console.log('Path accessed:', path);
+
+        // Your logic here
     }
 }
