@@ -16,9 +16,6 @@ export class AuthService {
     ) { }
 
     async validateUser(email: string, password: string): Promise<any> {
-        
-        console.log("Email adalah: ", email)
-        
         var param = new UserQueryDto()
         param.email = email
 

@@ -1,12 +1,17 @@
-import { Controller, Get, Post, Query, Body, BadRequestException, Patch, Delete, Param } from '@nestjs/common';
+import { Controller, Get, Query, Body, Patch, Delete, Param, Req, HttpStatus } from '@nestjs/common';
 import { UserService } from './user.service';
-import { UserCreateDto, UserDeleteDto, UserLoginDto, UserQueryDto, UserUpdateDto } from './dto/user.query.dto';
+import { UserQueryDto, UserUpdateDto } from './dto/user.query.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { Request } from 'express';
+import { ResponseService } from 'src/common/response.util';
 
 @ApiTags('users')
 @Controller('v1/user')
 export class UserController {
-    constructor(private readonly userService: UserService) { }
+    constructor(
+        private readonly userService: UserService,
+        private readonly responseService: ResponseService,
+    ) { }
 
     @Get()
     public async findAll(
@@ -29,7 +34,7 @@ export class UserController {
 
     // Delete by id
     @Delete(":id")
-    public async delete(@Param('id') id : string) {
+    public async delete(@Param('id') id: string) {
         const buildParam = new UserQueryDto(
             {
                 id
@@ -37,5 +42,27 @@ export class UserController {
         );
 
         return this.userService.delete(buildParam);
+    }
+
+    // Testing for path
+    @Get('ptesting')
+    async getData(@Req() request: Request) {
+        try {
+            const data = {
+                message: "Hello World"
+            }
+            return await this.responseService.ReturnHttpSuccess(request, data);
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    @Get('ptesting-fail')
+    async getDataFail(@Req() request: Request) {
+        try {
+            return await this.responseService.ReturnHttpError(request, HttpStatus.BAD_REQUEST);
+        } catch (error) {
+            console.log(error)
+        }
     }
 }
