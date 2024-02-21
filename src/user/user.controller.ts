@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Body, Patch, Delete, Param, Req } from '@nestjs/common';
+import { Controller, Get, Query, Body, Patch, Delete, Param, Req, HttpStatus } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserQueryDto, UserUpdateDto } from './dto/user.query.dto';
 import { ApiTags } from '@nestjs/swagger';
@@ -8,7 +8,10 @@ import { ResponseService } from 'src/common/response.util';
 @ApiTags('users')
 @Controller('v1/user')
 export class UserController {
-    constructor(private readonly userService: UserService) { }
+    constructor(
+        private readonly userService: UserService,
+        private readonly responseService: ResponseService,
+    ) { }
 
     @Get()
     public async findAll(
@@ -44,9 +47,22 @@ export class UserController {
     // Testing for path
     @Get('ptesting')
     async getData(@Req() request: Request) {
-        const path = request.path; // This will give you the path that was accessed
-        console.log('Path accessed:', path);
+        try {
+            const data = {
+                message: "Hello World"
+            }
+            return await this.responseService.ReturnHttpSuccess(request, data);
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
-        // Your logic here
+    @Get('ptesting-fail')
+    async getDataFail(@Req() request: Request) {
+        try {
+            return await this.responseService.ReturnHttpError(request, HttpStatus.BAD_REQUEST);
+        } catch (error) {
+            console.log(error)
+        }
     }
 }
