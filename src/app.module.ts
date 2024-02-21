@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { ChatModule } from './chat/chat.module';
 import { JwtModule } from '@nestjs/jwt';
 import { AddContextAttribute } from './middleware/context';
+import { PtestingModule } from './ptesting/ptesting.module';
 
 
 // Environment variables
@@ -37,6 +38,7 @@ let mongoDBUri : string
     AuthModule,
     UserModule,
     ChatModule,
+    PtestingModule,
   ],
   controllers: [AppController],
   providers: [AppService],

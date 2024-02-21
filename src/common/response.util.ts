@@ -68,7 +68,7 @@ export class ResponseService {
     return {
       message: {
         title: status,
-        body: ResponseMessage.SUCCESS,
+        body: ResponseMessage.ERROR,
       },
       metadata: {
         path,
