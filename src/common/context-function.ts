@@ -10,13 +10,14 @@ export function SetAcceptLanguage(executionContext: ExecutionContext, lang: stri
     var request = executionContext.switchToHttp().getRequest();
     request.headers[ContextKey.AcceptLanguage] = lang;
 
-    return request;
+    return executionContext;
 }
 
 // Get Accept Language
-export function GetAcceptLanguage(ctx: ExecutionContext): string {
+export function GetAcceptLanguage(executionContext: ExecutionContext): string {
     // Return English as the default language
-    const lang = ctx.switchToHttp().getRequest().context?.AcceptLanguage as string | undefined;
+    var request = executionContext.switchToHttp().getRequest();
+    const lang = request.headers[ContextKey.AcceptLanguage] as string | undefined;
     if (!lang) {
         return LanguageEnum.EN;
     }

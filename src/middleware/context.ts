@@ -1,12 +1,15 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
-import { Request, Response, NextFunction } from 'express';
+import { CanActivate, ExecutionContext, Injectable, NestMiddleware } from '@nestjs/common';
+import { GetAcceptLanguage, SetAcceptLanguage } from 'src/common/context-function';
 
 @Injectable()
-export class AddContextAttribute implements NestMiddleware {
-  use(req: Request, res: Response, next: NextFunction) {
-    console.log('Request...');
+export class AddContextAttribute implements CanActivate {
+  canActivate(
+    context: ExecutionContext,
+  ): boolean | Promise<boolean> {
 
-    // We will adding logic to add new context keys to the request object here
-    next();
+    var req = SetAcceptLanguage(context, 'en');
+    console.log(GetAcceptLanguage(req));
+
+    return true
   }
 }

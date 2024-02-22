@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { AddContextAttribute } from './middleware/context';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -12,6 +13,9 @@ async function bootstrap() {
 
   // Enabling global prefix
   app.setGlobalPrefix('api');
+
+  // Enabling context guards
+  app.useGlobalGuards(new AddContextAttribute());
 
   // Swagger setup
   const config = new DocumentBuilder()
