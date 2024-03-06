@@ -47,7 +47,6 @@ export class AuthService {
             
         } catch (error) {
             // Handle error
-            console.log(error)
             throw new Error('Failed to login');
         }
     }

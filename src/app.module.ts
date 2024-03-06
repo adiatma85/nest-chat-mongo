@@ -1,4 +1,4 @@
-import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -7,7 +7,6 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { ChatModule } from './chat/chat.module';
 import { JwtModule } from '@nestjs/jwt';
-import { AddContextAttribute } from './middleware/context';
 import { PtestingModule } from './ptesting/ptesting.module';
 
 
@@ -43,7 +42,7 @@ let mongoDBUri : string
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule implements NestModule {
+export class AppModule  {
   
   // Constructor to assign environment variables
   constructor() {
@@ -51,9 +50,4 @@ export class AppModule implements NestModule {
     mongoDBUri = process.env.MONGODB_URI
   }
 
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(AddContextAttribute)
-      .forRoutes('*');
-  }
 }

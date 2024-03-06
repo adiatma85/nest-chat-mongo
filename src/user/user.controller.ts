@@ -43,26 +43,4 @@ export class UserController {
 
         return this.userService.delete(buildParam);
     }
-
-    // Testing for path
-    @Get('ptesting')
-    async getData(@Req() request: Request) {
-        try {
-            const data = {
-                message: "Hello World"
-            }
-            return await this.responseService.ReturnHttpSuccess(request, data);
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
-    @Get('ptesting-fail')
-    async getDataFail(@Req() request: Request) {
-        try {
-            return await this.responseService.ReturnHttpError(request, HttpStatus.BAD_REQUEST);
-        } catch (error) {
-            console.log(error)
-        }
-    }
 }
