@@ -3,7 +3,7 @@ import { UserCreateDto, UserLoginDto } from 'src/user/dto/user.query.dto';
 import { UserService } from 'src/user/user.service';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { ResponseService, TransformToDTO } from 'src/common/response.util';
+import { ResponseService, TransformError } from 'src/common/response.util';
 import { Request } from 'express';
 
 @ApiTags('auth')
@@ -24,13 +24,7 @@ export class AuthController {
             const response = await this.responseService.ReturnHttpSuccess(request, data);
             return response;
         } catch (error) {
-            let errorObj = TransformToDTO(error)
-
-            if (errorObj.errorNumber == 0) {
-                return await this.responseService.ReturnHttpError(request, HttpStatus.INTERNAL_SERVER_ERROR, "internal server error");    
-            }
-
-            return await this.responseService.ReturnHttpError(request, errorObj.errorNumber, errorObj.errorMessage);
+            return await this.responseService.ReturnHttpError(request, TransformError(error));
         }
     }
 
@@ -42,13 +36,7 @@ export class AuthController {
             const response = await this.responseService.ReturnHttpSuccess(request, data);
             return response;
         } catch (error) {
-            let errorObj = TransformToDTO(error)
-
-            if (errorObj.errorNumber == 0) {
-                return await this.responseService.ReturnHttpError(request, HttpStatus.INTERNAL_SERVER_ERROR, "internal server error");    
-            }
-
-            return await this.responseService.ReturnHttpError(request, errorObj.errorNumber, errorObj.errorMessage);
+            return await this.responseService.ReturnHttpError(request, TransformError(error));
         }
     }
 }

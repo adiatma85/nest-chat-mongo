@@ -35,10 +35,9 @@ export class ResponseService {
 
   // Function to Return HTTP Success Response
   ReturnHttpSuccess(req: Request, data: any): ApiResponse<any> {
-    const status = "OK";
-    const path = req.path;
-    const statusCode = HttpStatus.OK;
-    const requestId = req.headers['x-request-id'] || '';
+    let status = "OK";
+    let path = req.path;
+    let statusCode = HttpStatus.OK;
 
     return {
       message: {
@@ -59,15 +58,21 @@ export class ResponseService {
   }
 
   // Function to Return HTTP Error Response
-  ReturnHttpError(req: Request, errorCode: number, message :string) {
-    const status = ResponseStatus.ERROR;
-    const path = req.path;
-    const statusCode = errorCode;
-    const requestId = req.headers['x-request-id'] || '';
+  ReturnHttpError(req: Request, errorObj: ErrorDTO) : ApiResponse<any>  {
+    
+    let status = ResponseStatus.ERROR;
+    let path = req.path;
+    let statusCode = errorObj.errorNumber;
+    let title = errorObj.errorMessage 
+
+    if (errorObj.errorNumber == 0) {
+      statusCode = HttpStatus.INTERNAL_SERVER_ERROR
+      title = "Internal Server Error"
+    }
 
     return {
       message: {
-        title: message,
+        title,
         body: ResponseMessage.ERROR,
       },
       metadata: {
@@ -83,6 +88,6 @@ export class ResponseService {
   }
 }
 
-export function TransformToDTO(error: any) : ErrorDTO{
+export function TransformError(error: any) : ErrorDTO{
   return error as ErrorDTO
 }

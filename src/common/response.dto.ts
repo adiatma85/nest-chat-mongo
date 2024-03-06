@@ -9,7 +9,7 @@ export class ApiResponse<T> {
     requestId: string;
     timeElapsed: string;
   };
-  data: T;
+  data?: T;
 }
 
 export class ErrorDTO {

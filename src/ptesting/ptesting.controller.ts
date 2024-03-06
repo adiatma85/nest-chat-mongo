@@ -3,6 +3,7 @@ import { ResponseService } from 'src/common/response.util';
 import { ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { PtestingService } from './ptesting.service';
+import { TransformError } from 'src/common/response.util';
 
 @ApiTags('ptesting')
 @Controller('ptesting')
@@ -22,7 +23,7 @@ export class PtestingController {
 
             return await this.responseService.ReturnHttpSuccess(request, data);
         } catch (error) {
-            return await this.responseService.ReturnHttpError(request, HttpStatus.INTERNAL_SERVER_ERROR, "testing error");
+            return await this.responseService.ReturnHttpError(request, TransformError(error));
         }
     }
 
@@ -34,7 +35,7 @@ export class PtestingController {
             }
             return await this.responseService.ReturnHttpSuccess(request, data);
         } catch (error) {
-            return await this.responseService.ReturnHttpError(request, HttpStatus.BAD_REQUEST, "testing error");
+            return await this.responseService.ReturnHttpError(request, TransformError(error));
         }
     }
 }
