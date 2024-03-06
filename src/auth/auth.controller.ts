@@ -36,7 +36,19 @@ export class AuthController {
 
     // Register fucntion
     @Post('/register')
-    public async register(@Body() createUserDto: UserCreateDto) {
-        return await this.userService.create(createUserDto);
+    public async register(@Body() createUserDto: UserCreateDto, @Req() request: Request) {
+        try {
+            const data = await this.authService.registerUser(createUserDto);
+            const response = await this.responseService.ReturnHttpSuccess(request, data);
+            return response;
+        } catch (error) {
+            let errorObj = TransformToDTO(error)
+
+            if (errorObj.errorNumber == 0) {
+                return await this.responseService.ReturnHttpError(request, HttpStatus.INTERNAL_SERVER_ERROR, "internal server error");    
+            }
+
+            return await this.responseService.ReturnHttpError(request, errorObj.errorNumber, errorObj.errorMessage);
+        }
     }
 }

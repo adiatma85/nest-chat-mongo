@@ -1,14 +1,13 @@
 import { HttpStatus, Injectable, NotAcceptableException } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
-import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { UserLoginDto, UserQueryDto } from 'src/user/dto/user.query.dto';
 import { Model } from 'mongoose';
 import { User } from 'src/schema/user..schema';
 import { InjectModel } from '@nestjs/mongoose';
-import { LoginResponse } from './dto/auth.dto';
-import { TransformToDTO } from 'src/common/response.util';
+import { LoginResponse, RegisterResponse } from './dto/auth.dto';
 import { ErrorDTO } from 'src/common/response.dto';
+import { UserCreateDto } from 'src/user/dto/user.query.dto';
 
 @Injectable()
 export class AuthService {
@@ -18,7 +17,31 @@ export class AuthService {
         @InjectModel(User.name) private readonly userModel: Model<User>,
     ) { }
 
-    async loginUser(userLoginDto: UserLoginDto) : Promise<LoginResponse | ErrorDTO> {
+    async registerUser(createUserDto: UserCreateDto) {
+        try {
+            const { email, name, password } = createUserDto
+
+            if (!name || !email || !password) {
+                throw new ErrorDTO(HttpStatus.BAD_REQUEST, "bad request")
+            }
+
+            const userExists = await this.userModel.findOne({ email }).exec();
+
+            if (userExists) {
+                throw new ErrorDTO(HttpStatus.BAD_REQUEST, "user already exist")
+            }
+
+            const newUser = await this.userModel.create(createUserDto);
+            const response = new RegisterResponse(newUser)
+
+            return response
+
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async loginUser(userLoginDto: UserLoginDto): Promise<LoginResponse | ErrorDTO> {
         try {
             const { email, password } = userLoginDto;
             const user = await this.userModel.findOne({ email }).exec();
@@ -30,7 +53,7 @@ export class AuthService {
             } else {
                 throw new ErrorDTO(HttpStatus.UNAUTHORIZED, "unmatch credential")
             }
-            
+
         } catch (error) {
             throw error
         }
