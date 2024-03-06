@@ -12,6 +12,17 @@ export class ApiResponse<T> {
   data: T;
 }
 
+export class ErrorDTO {
+  errorNumber: number
+  errorMessage: string
+
+  constructor(errorNumber: number, errorMessage: string) {
+    this.errorNumber = errorNumber
+    this.errorMessage = errorMessage
+  }
+}
+
+
 export enum ResponseMessage {
   SUCCESS = 'Success',
   ERROR = 'Error',

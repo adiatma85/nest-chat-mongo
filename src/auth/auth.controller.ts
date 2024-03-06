@@ -3,9 +3,8 @@ import { UserCreateDto, UserLoginDto } from 'src/user/dto/user.query.dto';
 import { UserService } from 'src/user/user.service';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { ResponseService } from 'src/common/response.util';
+import { ResponseService, TransformToDTO } from 'src/common/response.util';
 import { Request } from 'express';
-import { v4 as uuidv4 } from 'uuid';
 
 @ApiTags('auth')
 @Controller('v1/auth')
@@ -20,10 +19,19 @@ export class AuthController {
     @Post('/login')
     // Apply all the repsonse to other endpoints too
     public async login(@Body() userloginDto: UserLoginDto, @Req() request: Request) {
-        const data = await this.authService.loginUser(userloginDto);
+        try {
+            const data = await this.authService.loginUser(userloginDto);
+            const response = await this.responseService.ReturnHttpSuccess(request, data);
+            return response;
+        } catch (error) {
+            let errorObj = TransformToDTO(error)
 
-        const response = await this.responseService.ReturnHttpSuccess(request, data);
-        return response;
+            if (errorObj.errorNumber == 0) {
+                return await this.responseService.ReturnHttpError(request, HttpStatus.INTERNAL_SERVER_ERROR, "internal server error");    
+            }
+
+            return await this.responseService.ReturnHttpError(request, errorObj.errorNumber, errorObj.errorMessage);
+        }
     }
 
     // Register fucntion

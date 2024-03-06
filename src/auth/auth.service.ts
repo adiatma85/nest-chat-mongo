@@ -1,4 +1,4 @@
-import { Injectable, NotAcceptableException } from '@nestjs/common';
+import { HttpStatus, Injectable, NotAcceptableException } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
@@ -6,6 +6,9 @@ import { UserLoginDto, UserQueryDto } from 'src/user/dto/user.query.dto';
 import { Model } from 'mongoose';
 import { User } from 'src/schema/user..schema';
 import { InjectModel } from '@nestjs/mongoose';
+import { LoginResponse } from './dto/auth.dto';
+import { TransformToDTO } from 'src/common/response.util';
+import { ErrorDTO } from 'src/common/response.dto';
 
 @Injectable()
 export class AuthService {
@@ -15,39 +18,21 @@ export class AuthService {
         @InjectModel(User.name) private readonly userModel: Model<User>,
     ) { }
 
-    async validateUser(email: string, password: string): Promise<any> {
-        var param = new UserQueryDto()
-        param.email = email
-
-        const user = await this.userService.findOne(param);
-        if (!user) {
-            throw new NotAcceptableException('could not find the user');
-        }
-
-        const passwordValid = await bcrypt.compare(password, user.password)
-        if (user && passwordValid) {
-            return user;
-        }
-        return null;
-    }
-
-    async loginUser(userLoginDto: UserLoginDto) {
+    async loginUser(userLoginDto: UserLoginDto) : Promise<LoginResponse | ErrorDTO> {
         try {
             const { email, password } = userLoginDto;
             const user = await this.userModel.findOne({ email }).exec();
 
             if (user && (await user.matchPassword(password))) {
                 const payload = { sub: user._id };
-                return {
-                    access_token: await this.jwtService.signAsync(payload),
-                };
+                const response = new LoginResponse(await this.jwtService.signAsync(payload))
+                return response;
             } else {
-                return null;
+                throw new ErrorDTO(HttpStatus.UNAUTHORIZED, "unmatch credential")
             }
             
         } catch (error) {
-            // Handle error
-            throw new Error('Failed to login');
+            throw error
         }
     }
 }

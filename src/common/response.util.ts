@@ -1,5 +1,5 @@
 import { HttpStatus, Inject, Injectable, HttpCode } from '@nestjs/common';
-import { ApiResponse, ResponseMessage, ResponseStatus } from './response.dto';
+import { ApiResponse, ErrorDTO, ResponseMessage, ResponseStatus } from './response.dto';
 import { Request } from 'express';
 // import {  }
 
@@ -59,7 +59,7 @@ export class ResponseService {
   }
 
   // Function to Return HTTP Error Response
-  ReturnHttpError(req: Request, errorCode: number) {
+  ReturnHttpError(req: Request, errorCode: number, message :string) {
     const status = ResponseStatus.ERROR;
     const path = req.path;
     const statusCode = errorCode;
@@ -67,7 +67,7 @@ export class ResponseService {
 
     return {
       message: {
-        title: status,
+        title: message,
         body: ResponseMessage.ERROR,
       },
       metadata: {
@@ -81,4 +81,8 @@ export class ResponseService {
       },
     };
   }
+}
+
+export function TransformToDTO(error: any) : ErrorDTO{
+  return error as ErrorDTO
 }

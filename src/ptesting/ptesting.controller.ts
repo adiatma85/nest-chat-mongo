@@ -3,8 +3,6 @@ import { ResponseService } from 'src/common/response.util';
 import { ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { PtestingService } from './ptesting.service';
-import { GetAcceptLanguage } from 'src/common/context-function';
-import { ContextKey } from 'src/common/context-key';
 
 @ApiTags('ptesting')
 @Controller('ptesting')
@@ -24,8 +22,7 @@ export class PtestingController {
 
             return await this.responseService.ReturnHttpSuccess(request, data);
         } catch (error) {
-            console.log(error)
-            return await this.responseService.ReturnHttpError(request, HttpStatus.INTERNAL_SERVER_ERROR);
+            return await this.responseService.ReturnHttpError(request, HttpStatus.INTERNAL_SERVER_ERROR, "testing error");
         }
     }
 
@@ -37,7 +34,7 @@ export class PtestingController {
             }
             return await this.responseService.ReturnHttpSuccess(request, data);
         } catch (error) {
-            return await this.responseService.ReturnHttpError(request, HttpStatus.BAD_REQUEST);
+            return await this.responseService.ReturnHttpError(request, HttpStatus.BAD_REQUEST, "testing error");
         }
     }
 }
