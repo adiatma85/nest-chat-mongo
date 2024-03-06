@@ -22,13 +22,6 @@ export class PtestingController {
                 message: await this.ptestingSerivce.getHello()
             }
 
-            // Eksperimen buat ngambil konteks language
-
-            // console.log("Konteks adalah: ", context)
-            let bahasa = GetAcceptLanguage(request)
-            console.log("Bahasa adalah: ", bahasa)
-
-
             return await this.responseService.ReturnHttpSuccess(request, data);
         } catch (error) {
             console.log(error)

@@ -5,7 +5,6 @@ import { LanguageEnum } from './language';
 import { v4 as uuidv4 } from 'uuid';
 import { Request } from 'express';
 
-
 // Get Accept Language
 export function GetAcceptLanguage(request: Request): string {
     // Return English as the default language
