@@ -11,8 +11,11 @@ import { ResponseService } from 'src/common/response.util';
       { name: User.name, schema: UserSchema },
     ]),
   ],
-  providers: [UserService, ResponseService],
+  providers: [
+    UserService,
+    ResponseService
+  ],
   controllers: [UserController],
   exports: [UserService],
 })
-export class UserModule {}
+export class UserModule { }

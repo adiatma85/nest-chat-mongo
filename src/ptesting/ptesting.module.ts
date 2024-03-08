@@ -5,6 +5,9 @@ import { ResponseService } from 'src/common/response.util';
 
 @Module({
   controllers: [PtestingController],
-  providers: [PtestingService, ResponseService]
+  providers: [
+    PtestingService,
+    ResponseService
+  ]
 })
-export class PtestingModule {}
+export class PtestingModule { }

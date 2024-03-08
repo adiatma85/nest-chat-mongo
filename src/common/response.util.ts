@@ -1,7 +1,6 @@
-import { HttpStatus, Inject, Injectable, HttpCode } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable, HttpCode, HttpException } from '@nestjs/common';
 import { ApiResponse, ErrorDTO, ResponseMessage, ResponseStatus } from './response.dto';
 import { Request } from 'express';
-// import {  }
 
 @Injectable()
 export class ResponseService {
@@ -90,4 +89,17 @@ export class ResponseService {
 
 export function TransformError(error: any) : ErrorDTO{
   return error as ErrorDTO
+}
+
+
+
+export class AllException extends HttpException {
+
+  errorDTO : ErrorDTO
+
+  constructor(erroDTO : ErrorDTO) {
+    super(erroDTO.errorMessage, erroDTO.errorNumber);
+
+    this.errorDTO = erroDTO
+  }
 }

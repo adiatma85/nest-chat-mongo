@@ -1,13 +1,15 @@
-import { HttpStatus, Injectable, NotAcceptableException } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
-import { UserLoginDto, UserQueryDto } from 'src/user/dto/user.query.dto';
+import { UserLoginDto } from 'src/user/dto/user.query.dto';
 import { Model } from 'mongoose';
 import { User } from 'src/schema/user..schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { LoginResponse, RegisterResponse } from './dto/auth.dto';
 import { ErrorDTO } from 'src/common/response.dto';
 import { UserCreateDto } from 'src/user/dto/user.query.dto';
+import { AllException } from 'src/common/response.util';
+import { TransformError } from 'src/common/response.util';
 
 @Injectable()
 export class AuthService {
@@ -37,7 +39,7 @@ export class AuthService {
             return response
 
         } catch (error) {
-            throw error
+            throw new AllException(TransformError(error))
         }
     }
 
@@ -55,7 +57,7 @@ export class AuthService {
             }
 
         } catch (error) {
-            throw error
+            throw new AllException(TransformError(error))
         }
     }
 }

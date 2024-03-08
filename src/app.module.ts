@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { ChatModule } from './chat/chat.module';
 import { JwtModule } from '@nestjs/jwt';
 import { PtestingModule } from './ptesting/ptesting.module';
+import { ResponseService } from './common/response.util';
 
 
 // Environment variables
@@ -40,7 +41,7 @@ let mongoDBUri : string
     PtestingModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, ResponseService],
 })
 export class AppModule  {
   
