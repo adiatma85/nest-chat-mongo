@@ -22,8 +22,9 @@ export class AuthController {
     public async login(@Body() userloginDto: UserLoginDto, @Req() request: Request) {
         try {
             const data = await this.authService.loginUser(userloginDto);
-            const responseBody = await this.responseService.ReturnHttpSuccess(request, data);
-            return responseBody;
+            return data
+            // const responseBody = await this.responseService.ReturnHttpSuccess(request, data);
+            // return responseBody;
         } catch (error) {
             throw error
         }

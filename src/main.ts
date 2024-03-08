@@ -2,8 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AddContextAttribute } from './middleware/context.interceptor';
-import { HttpExceptionFilter } from './common/exception';
-import { ResponseInterceptor } from './response/response.interceptor';
+import { HttpExceptionFilter } from './response/response.failed.filter';
+import { ResponseInterceptor } from './response/response.success.interceptor';
 import { ResponseService } from './common/response.util';
 
 async function bootstrap() {
@@ -11,8 +11,6 @@ async function bootstrap() {
     logger: ['log', 'error', 'warn', 'debug', 'verbose'],
   });
 
-  // Service provider
-  const serviceProvider = new ResponseService()
 
   // Enabling cors
   app.enableCors();
@@ -21,13 +19,12 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
 
   // Enable global filter for http exception filter
-  app.useGlobalFilters(new HttpExceptionFilter(serviceProvider))
+  app.useGlobalFilters(new HttpExceptionFilter())
 
   // Enabling context interceptor
-  // For bow disable the Response Interceptor
   app.useGlobalInterceptors(
     new AddContextAttribute(),
-    // new ResponseInterceptor()
+    new ResponseInterceptor()
   );
 
   // Swagger setup
