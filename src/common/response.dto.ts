@@ -9,15 +9,25 @@ export class ApiResponse<T> {
     requestId: string;
     timeElapsed: string;
   };
-  data: T;
+  data?: T;
+}
+
+export class ErrorDTO {
+  errorNumber: number
+  errorMessage: string
+
+  constructor(errorNumber: number, errorMessage: string) {
+    this.errorNumber = errorNumber
+    this.errorMessage = errorMessage
+  }
 }
 
 export enum ResponseMessage {
-  SUCCESS = 'Success',
-  ERROR = 'Error',
+  SUCCESS = 'success',
+  ERROR = 'error',
 }
 
 export enum ResponseStatus {
-  OK = 'OK',
-  ERROR = 'Error',
+  OK = 'ok',
+  ERROR = 'error',
 }

@@ -22,23 +22,6 @@ export class UserService {
         }
     }
 
-    public async loginUser(userLoginDto: UserLoginDto): Promise<UsersProfile | null> {
-        try {
-            const { email, password } = userLoginDto;
-            const user = await this.userModel.findOne({ email }).exec();
-    
-            if (user && (await user.matchPassword(password))) {
-                return user;
-            } else {
-                return null;
-            }
-        } catch (error) {
-            // Handle error
-            throw new Error('Failed to login');
-        }
-    }
-
-    // Will return all user from mongodb user model schema
     public async findAll(searchKeyword?: string): Promise<User[]> {
         try {
             const keyword = searchKeyword
@@ -57,7 +40,6 @@ export class UserService {
         }
     }
 
-    // Will return user if found
     public async findOne(param: UserQueryDto) {
         try {
             const user = await this.userModel.findOne(param).exec();
@@ -69,8 +51,6 @@ export class UserService {
     }
 
 
-    // Will return error if user not found
-    // Will return updated user entry if success
     public async update(param: UserQueryDto, userUpdateDto: UserUpdateDto) {
         try {
             const user = await this.userModel.updateMany(param, { $set: userUpdateDto });

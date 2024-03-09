@@ -1,17 +1,15 @@
 import { Controller, Get, Query, Body, Patch, Delete, Param, Req, HttpStatus, ExecutionContext } from '@nestjs/common';
-import { ResponseService } from 'src/common/response.util';
+import { AllException } from 'src/common/response.util';
 import { ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { PtestingService } from './ptesting.service';
-import { GetAcceptLanguage } from 'src/common/context-function';
-import { ContextKey } from 'src/common/context-key';
+import { TransformError } from 'src/common/response.util';
 
 @ApiTags('ptesting')
 @Controller('ptesting')
 export class PtestingController {
     constructor(
         private readonly ptestingSerivce: PtestingService,
-        private readonly responseService: ResponseService,
     ) { }
     
     // Testing for path
@@ -22,10 +20,9 @@ export class PtestingController {
                 message: await this.ptestingSerivce.getHello()
             }
 
-            return await this.responseService.ReturnHttpSuccess(request, data);
+            return data
         } catch (error) {
-            console.log(error)
-            return await this.responseService.ReturnHttpError(request, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new AllException(TransformError(error))
         }
     }
 
@@ -35,9 +32,9 @@ export class PtestingController {
             const data = {
                 message: await this.ptestingSerivce.getHelloFail()
             }
-            return await this.responseService.ReturnHttpSuccess(request, data);
+            return data
         } catch (error) {
-            return await this.responseService.ReturnHttpError(request, HttpStatus.BAD_REQUEST);
+            throw new AllException(TransformError(error))
         }
     }
 }

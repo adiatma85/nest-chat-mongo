@@ -1,11 +1,15 @@
-import { Injectable, NotAcceptableException } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
-import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
-import { UserLoginDto, UserQueryDto } from 'src/user/dto/user.query.dto';
+import { UserLoginDto } from 'src/user/dto/user.query.dto';
 import { Model } from 'mongoose';
 import { User } from 'src/schema/user..schema';
 import { InjectModel } from '@nestjs/mongoose';
+import { LoginResponse, RegisterResponse } from './dto/auth.dto';
+import { ErrorDTO } from 'src/common/response.dto';
+import { UserCreateDto } from 'src/user/dto/user.query.dto';
+import { AllException } from 'src/common/response.util';
+import { TransformError } from 'src/common/response.util';
 
 @Injectable()
 export class AuthService {
@@ -15,39 +19,45 @@ export class AuthService {
         @InjectModel(User.name) private readonly userModel: Model<User>,
     ) { }
 
-    async validateUser(email: string, password: string): Promise<any> {
-        var param = new UserQueryDto()
-        param.email = email
+    async registerUser(createUserDto: UserCreateDto) {
+        try {
+            const { email, name, password } = createUserDto
 
-        const user = await this.userService.findOne(param);
-        if (!user) {
-            throw new NotAcceptableException('could not find the user');
-        }
+            if (!name || !email || !password) {
+                throw new ErrorDTO(HttpStatus.BAD_REQUEST, "bad request")
+            }
 
-        const passwordValid = await bcrypt.compare(password, user.password)
-        if (user && passwordValid) {
-            return user;
+            const userExists = await this.userModel.findOne({ email }).exec();
+
+            if (userExists) {
+                throw new ErrorDTO(HttpStatus.BAD_REQUEST, "user already exist")
+            }
+
+            const newUser = await this.userModel.create(createUserDto);
+            const response = new RegisterResponse(newUser)
+
+            return response
+
+        } catch (error) {
+            throw new AllException(TransformError(error))
         }
-        return null;
     }
 
-    async loginUser(userLoginDto: UserLoginDto) {
+    async loginUser(userLoginDto: UserLoginDto): Promise<LoginResponse | ErrorDTO> {
         try {
             const { email, password } = userLoginDto;
             const user = await this.userModel.findOne({ email }).exec();
 
             if (user && (await user.matchPassword(password))) {
                 const payload = { sub: user._id };
-                return {
-                    access_token: await this.jwtService.signAsync(payload),
-                };
+                const response = new LoginResponse(await this.jwtService.signAsync(payload))
+                return response;
             } else {
-                return null;
+                throw new ErrorDTO(HttpStatus.UNAUTHORIZED, "unmatch credential")
             }
-            
+
         } catch (error) {
-            // Handle error
-            throw new Error('Failed to login');
+            throw new AllException(TransformError(error))
         }
     }
 }

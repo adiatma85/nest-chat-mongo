@@ -6,7 +6,6 @@ import { User, UserSchema } from 'src/schema/user..schema';
 import { AuthService } from './auth.service';
 import { PassportModule } from "@nestjs/passport"
 import { UserModule } from "src/user/user.module";
-import { ResponseService } from 'src/common/response.util';
 
 @Module({
   imports: [
@@ -17,6 +16,6 @@ import { ResponseService } from 'src/common/response.util';
     UserModule,
   ],
   controllers: [AuthController],
-  providers : [UserService, AuthService, ResponseService],
+  providers : [UserService, AuthService],
 })
 export class AuthModule {}
