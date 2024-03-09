@@ -22,13 +22,12 @@ export class ErrorDTO {
   }
 }
 
-
 export enum ResponseMessage {
-  SUCCESS = 'Success',
-  ERROR = 'Error',
+  SUCCESS = 'success',
+  ERROR = 'error',
 }
 
 export enum ResponseStatus {
-  OK = 'OK',
-  ERROR = 'Error',
+  OK = 'ok',
+  ERROR = 'error',
 }
