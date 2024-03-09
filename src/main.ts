@@ -4,7 +4,6 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AddContextAttribute } from './middleware/context.interceptor';
 import { HttpExceptionFilter } from './response/response.failed.filter';
 import { ResponseInterceptor } from './response/response.success.interceptor';
-import { ResponseService } from './common/response.util';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {

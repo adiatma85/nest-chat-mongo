@@ -3,14 +3,12 @@ import { UserService } from './user.service';
 import { UserQueryDto, UserUpdateDto } from './dto/user.query.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
-import { ResponseService } from 'src/common/response.util';
 
 @ApiTags('users')
 @Controller('v1/user')
 export class UserController {
     constructor(
         private readonly userService: UserService,
-        private readonly responseService: ResponseService,
     ) { }
 
     @Get()
