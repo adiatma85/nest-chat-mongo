@@ -5,8 +5,9 @@ import { InjectModel } from '@nestjs/mongoose';
 import { User } from 'src/schema/user..schema';
 import { JwtService } from '@nestjs/jwt';
 import { ErrorDTO, TokenClass } from 'src/common/response.dto';
-import { UserQueryDto } from 'src/user/dto/user.query.dto';
+import { UserQueryInterface } from 'src/user/dto/user.query.dto';
 import { AllException, TransformError } from 'src/common/response.util';
+import { ContextKey } from 'src/common/context-key';
 
 @Injectable()
 // https://blog.logrocket.com/how-to-implement-jwt-authentication-nestjs/
@@ -29,12 +30,13 @@ export class TokenGuard implements CanActivate {
     let tokenExtracted = this.extractPayloadToken(token)
 
     // Build the user dto in here
-    let userQueryDTO = new UserQueryDto()
-    userQueryDTO._id = tokenExtracted.sub
+    let userQueryDTO: UserQueryInterface = {
+      _id : tokenExtracted.sub
+    }
 
     let user = await this.fetchUser(userQueryDTO)
 
-    request['user'] = user;
+    request[ContextKey.User] = user;
 
     return true;
   }
@@ -51,7 +53,7 @@ export class TokenGuard implements CanActivate {
   }
 
   // Function to fetch user from model
-  private async fetchUser(param: UserQueryDto) {
+  private async fetchUser(param: UserQueryInterface) {
     try {
       const user = await this.userModel.findOne(param).exec();
       return user;
