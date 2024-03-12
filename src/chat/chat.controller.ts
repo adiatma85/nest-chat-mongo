@@ -1,11 +1,25 @@
-import { Body, Controller, Get, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Req } from '@nestjs/common';
+import { ChatService } from './chat.service';
+import { ChatQueryDto } from './dto/chat.dto';
 
 @Controller('v1/chat')
 export class ChatController {
 
+    constructor(
+        private readonly chatService: ChatService,
+    ) {
+
+    }
+
     @Post()
-    public async accessChat() {
-        // return this.chatService.create(createChatDto);
+    public async accessChat(@Req() request: Request, @Body() body: ChatQueryDto) {
+        const { userId } = body
+        try {
+            const data = await this.chatService.accessChat(request, userId)
+            return data
+        } catch (error) {
+            throw error
+        }
     }
 
     @Get()
@@ -28,7 +42,7 @@ export class ChatController {
 
     }
 
-    
+
     @Put('/group-remove')
     public async removeFromGroup() {
 
