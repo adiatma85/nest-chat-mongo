@@ -4,6 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { UserCreateDto, UserLoginDto, UserQueryDto, UserUpdateDto } from './dto/user.query.dto';
 import { UsersProfile } from './interfaces/user.interfaces';
+import { AllException, TransformError } from 'src/common/response.util';
 
 @Injectable()
 export class UserService {
@@ -36,7 +37,7 @@ export class UserService {
             return await this.userModel.find(keyword).exec();
         } catch (error) {
             // Handle error
-            throw new Error('Failed to fetch users');
+            throw new AllException(TransformError(error));
         }
     }
 
@@ -57,7 +58,7 @@ export class UserService {
             return user;
         } catch (error) {
             // Handle error
-            throw new Error('Failed to update user');
+            throw new AllException(TransformError(error));
         }
     }
 
@@ -67,7 +68,7 @@ export class UserService {
             return user;
         } catch (error) {
             // Handle error
-            throw new Error('Failed to delete user');
+            throw new AllException(TransformError(error));
         }
     }
 }

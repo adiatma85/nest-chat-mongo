@@ -21,24 +21,30 @@ export class UserController {
     // Update by id
     @Patch(":id")
     public async update(@Param('id') id: string, @Body() userUpdateDto: UserUpdateDto) {
-        const buildParam = new UserQueryDto(
-            {
-                _id : id
-            },
-        );
-
-        return this.userService.update(buildParam, userUpdateDto);
+        try {
+            const buildParam: UserQueryDto = {
+                _id: id
+            };
+    
+            const data =  this.userService.update(buildParam, userUpdateDto);
+            return data
+        } catch (error) {
+            throw error
+        }
     }
 
     // Delete by id
     @Delete(":id")
     public async delete(@Param('id') id: string) {
-        const buildParam = new UserQueryDto(
-            {
-                _id : id
-            },
-        );
-
-        return this.userService.delete(buildParam);
+        try {
+            const buildParam: UserQueryDto = {
+                _id: id
+            };
+    
+            const data = this.userService.delete(buildParam);
+            return data
+        } catch (error) {
+            throw error
+        }
     }
 }

@@ -20,20 +20,6 @@ export class UserQueryDto {
     }
 }
 
-export class UserQueryInterface {
-    @IsString()
-    @IsOptional()
-    _id?: string;
-    
-    @IsString()
-    @IsOptional()
-    name?: string;
-
-    @IsEmail()
-    @IsOptional()
-    email?: string;
-}
-
 // DTO class for Creating User
 export class UserCreateDto {
     @IsString()
@@ -58,45 +44,8 @@ export class UserCreateDto {
     }
 }
 
-export class UserCreateInterface {
-    @IsString()
-    @ApiProperty()
-    name: string;
-
-    @IsEmail()
-    @ApiProperty()
-    email: string;
-
-    @IsString()
-    @ApiProperty()
-    password: string;
-
-    @IsString()
-    @IsOptional()
-    @ApiProperty()
-    pic?: string;
-
-    constructor(init?: Partial<UserCreateInterface>) {
-        Object.assign(this, init);
-    }
-}
-
 // DTO Class for Login User
 export class UserLoginDto {
-    @IsEmail()
-    @ApiProperty()
-    email: string;
-
-    @IsString()
-    @ApiProperty()
-    password: string;
-
-    constructor(init?: Partial<UserLoginDto>) {
-        Object.assign(this, init);
-    }
-}
-
-export class UserLoginInterface {
     @IsEmail()
     @ApiProperty()
     email: string;
@@ -116,11 +65,6 @@ export class UserUpdateDto extends PartialType(UserCreateDto) {
     id?: string;
 }
 
-export class UserUpdateInterface extends PartialType(UserCreateInterface) {
-    @IsString()
-    @IsOptional()
-    id?: string;
-}
 
 export class UserDeleteDto extends PartialType(UserCreateDto) {
     @IsString()
@@ -128,8 +72,3 @@ export class UserDeleteDto extends PartialType(UserCreateDto) {
     _id?: string;
 }
 
-export class UserDeleteInterface extends PartialType(UserCreateInterface) {
-    @IsString()
-    @IsOptional()
-    _id?: string;
-}
