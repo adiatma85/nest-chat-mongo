@@ -5,7 +5,7 @@ import { ApiProperty, PartialType } from '@nestjs/swagger';
 export class UserQueryDto {
     @IsString()
     @IsOptional()
-    id?: string;
+    _id?: string;
     
     @IsString()
     @IsOptional()

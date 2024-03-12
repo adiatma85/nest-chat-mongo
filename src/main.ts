@@ -31,6 +31,7 @@ async function bootstrap() {
     .setTitle('API')
     .setDescription('The API description')
     .setVersion('1.0')
+    .addBearerAuth()
     .addTag('users')
     .addTag('auth')
     .addTag('ptesting')

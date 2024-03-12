@@ -1,5 +1,4 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { UserLoginDto } from 'src/user/dto/user.query.dto';
 import { Model } from 'mongoose';
@@ -14,7 +13,6 @@ import { TransformError } from 'src/common/response.util';
 @Injectable()
 export class AuthService {
     constructor(
-        private readonly userService: UserService,
         private readonly jwtService: JwtService,
         @InjectModel(User.name) private readonly userModel: Model<User>,
     ) { }

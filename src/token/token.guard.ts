@@ -1,16 +1,21 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException, } from '@nestjs/common';
+import { CanActivate, ExecutionContext, HttpStatus, Injectable, UnauthorizedException, } from '@nestjs/common';
 import { Request } from 'express';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from 'src/schema/user..schema';
+import { JwtService } from '@nestjs/jwt';
+import { ErrorDTO, TokenClass } from 'src/common/response.dto';
+import { UserQueryDto } from 'src/user/dto/user.query.dto';
+import { AllException, TransformError } from 'src/common/response.util';
 
 @Injectable()
 // https://blog.logrocket.com/how-to-implement-jwt-authentication-nestjs/
 export class TokenGuard implements CanActivate {
 
-  constructor( 
+  constructor(
     @InjectModel(User.name) private readonly userModel: Model<User>,
-    ) {}
+    private readonly jwtService: JwtService,
+  ) { }
 
   async canActivate(
     context: ExecutionContext,
@@ -18,38 +23,41 @@ export class TokenGuard implements CanActivate {
 
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
-    if (!token) throw new UnauthorizedException('please provide token');
 
-    // const user = await this.userModel.
+    if (!token) throw new ErrorDTO(HttpStatus.BAD_REQUEST, "please provide token");
 
+    let tokenExtracted = this.extractPayloadToken(token)
 
-    // const user = await this.prisma.user.findFirst({
-    //   where: { token },
-    // });
+    // Build the user dto in here
+    let userQueryDTO = new UserQueryDto()
+    userQueryDTO._id = tokenExtracted.sub
 
-    // if (user) {
-    //   request['user'] = user;
+    let user = await this.fetchUser(userQueryDTO)
 
-    //   return true;
-    // }
+    request['user'] = user;
 
-    // const tokenInstance = await this.prisma.token.findFirst({
-    //   where: { token },
-    //   include: { user: true },
-    // });
-    // if (!tokenInstance)
-    //   throw new ForbiddenException('token not match any user');
-
-    // const { user: userV2 } = tokenInstance;
-
-    // request['user'] = userV2;
-    // request['token'] = token;
-
-    return false;
+    return true;
   }
 
+  // This function only check if the 
   private extractTokenFromHeader(request: Request): string | undefined {
     const [type, token] = request.headers.authorization?.split(' ') ?? [];
     return type === 'Bearer' ? token : undefined;
+  }
+
+  // Function to extract user from token. Ini sudah objek
+  private extractPayloadToken(token: string) {
+    return this.jwtService.decode<TokenClass>(token)
+  }
+
+  // Function to fetch user from model
+  private async fetchUser(param: UserQueryDto) {
+    try {
+      const user = await this.userModel.findOne(param).exec();
+      return user;
+    } catch (error) {
+      // Handle error
+      throw new AllException(TransformError(error));
+    }
   }
 }

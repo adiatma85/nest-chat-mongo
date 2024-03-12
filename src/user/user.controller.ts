@@ -23,7 +23,7 @@ export class UserController {
     public async update(@Param('id') id: string, @Body() userUpdateDto: UserUpdateDto) {
         const buildParam = new UserQueryDto(
             {
-                id
+                _id : id
             },
         );
 
@@ -35,7 +35,7 @@ export class UserController {
     public async delete(@Param('id') id: string) {
         const buildParam = new UserQueryDto(
             {
-                id
+                _id : id
             },
         );
 
