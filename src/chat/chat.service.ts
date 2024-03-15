@@ -5,6 +5,7 @@ import { ContextKey } from 'src/common/context-key';
 import { ErrorDTO } from 'src/common/response.dto';
 import { Chat } from 'src/schema/chat.schema';
 import { User } from 'src/schema/user..schema';
+import { CreateGroupChatDto } from './dto/chat.dto';
 
 @Injectable()
 export class ChatService {
@@ -77,7 +78,19 @@ export class ChatService {
     }
   }
 
-  public async createGroupChat(@Req() request: Request) {
+
+  // Selesaikan di sni
+  public async createGroupChat(@Req() request: Request, createGroupChatDto : CreateGroupChatDto) {
+    try {
+      const user : User = request[ContextKey.User]
+
+      console.log("User adalah: ", user)
+
+      return user
+
+    } catch (error) {
+      throw new ErrorDTO(HttpStatus.BAD_REQUEST, error.message)
+    }
   //   if (!req.body.users || !req.body.name) {
   //     return res.status(400).send({ message: "Please Fill all the feilds" });
   //   }

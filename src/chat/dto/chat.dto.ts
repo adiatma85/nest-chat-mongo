@@ -1,11 +1,17 @@
-import { IsString, IsEmail, IsOptional } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsString, IsEmail, IsOptional, IsObject } from 'class-validator';
+import { User } from 'src/schema/user..schema';
 
 export class ChatQueryDto {   
     userId : string
 }
 
 export class CreateGroupChatDto {
-    users: any
+    @IsObject()
+    @ApiProperty({ type: () => [User], required: true })
+    users: User[];
 
-    name: string
+    @IsString()
+    @ApiProperty({ required: true }) 
+    name: string;
 }

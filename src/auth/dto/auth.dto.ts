@@ -1,5 +1,3 @@
-import { User } from "src/schema/user..schema";
-
 export class RegisterResponse {
 
     constructor(user: any){

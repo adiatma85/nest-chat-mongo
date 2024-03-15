@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory, SchemaOptions } from "@nestjs/mongoose"
 import { HydratedDocument } from 'mongoose';
 import * as bcrypt from "bcryptjs";
+import { ApiProperty } from "@nestjs/swagger";
 
 const schemaOpt: SchemaOptions = {
     timestamps: true
@@ -8,10 +9,16 @@ const schemaOpt: SchemaOptions = {
 
 @Schema(schemaOpt)
 export class User {
+    @Prop({ required: false })
+    @ApiProperty()
+    _id: string;
+
     @Prop({ required: true })
+    @ApiProperty()
     name: string;
 
     @Prop({ required: true, unique: true })
+    @ApiProperty()
     email: string;
 
     @Prop({ required: true })

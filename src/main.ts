@@ -32,8 +32,9 @@ async function bootstrap() {
     .setDescription('The API description')
     .setVersion('1.0')
     .addBearerAuth()
-    .addTag('users')
     .addTag('auth')
+    .addTag('chat')
+    .addTag('users')
     .addTag('ptesting')
     .build();
   const document = SwaggerModule.createDocument(app, config);
