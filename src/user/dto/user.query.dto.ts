@@ -5,7 +5,7 @@ import { ApiProperty, PartialType } from '@nestjs/swagger';
 export class UserQueryDto {
     @IsString()
     @IsOptional()
-    id?: string;
+    _id?: string;
     
     @IsString()
     @IsOptional()
@@ -65,8 +65,10 @@ export class UserUpdateDto extends PartialType(UserCreateDto) {
     id?: string;
 }
 
+
 export class UserDeleteDto extends PartialType(UserCreateDto) {
     @IsString()
     @IsOptional()
     _id?: string;
 }
+

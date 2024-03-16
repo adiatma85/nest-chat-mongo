@@ -19,4 +19,5 @@ export enum ContextKey {
   ResponseHttpCode = "ResponseHttpCode",
   AuthToken = "AuthToken",
   ServiceName = "ServiceName",
+  User = "User",
 }

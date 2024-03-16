@@ -22,6 +22,10 @@ export class ErrorDTO {
   }
 }
 
+export class TokenClass {
+  sub: any
+}
+
 export enum ResponseMessage {
   SUCCESS = 'success',
   ERROR = 'error',
