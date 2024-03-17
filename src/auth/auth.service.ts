@@ -119,4 +119,6 @@ export class AuthService {
         response.clearCookie('refresh_token');
         return 'Successfully logged out';
     }
+
+    // Token Guard --> https://www.youtube.com/watch?v=xPmUKBrZL74&list=LL&index=2&t=2528s
 }
