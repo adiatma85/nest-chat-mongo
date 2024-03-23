@@ -33,6 +33,7 @@
     "@nestjs/swagger": "^7.3.0",
     "@prisma/client": "5.11.0",
     "@types/bcryptjs": "^2.4.6",
+    "apollo-server-express": "^3.13.0",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "class-transformer": "^0.5.1",
