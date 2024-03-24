@@ -43,6 +43,6 @@ export class UserResolver {
         @Args('fullname') fullname: string,
         @Context() context: { req: Request },
     ) {
-        // return this.userService.searchUsers(fullname, context.req.user.sub);
+        return this.userService.searchUsers(fullname, context.req.user.sub);
     }
 }
