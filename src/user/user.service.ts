@@ -39,15 +39,27 @@ export class UserService {
             return updatedUser;
         }
 
-
         // If not
         return await this.prisma.user.update({
             where: { id: userId },
             data: {
-              fullname,
+                fullname,
             },
-          });
+        });
     }
 
-    
+    async searchUsers(fullname: string, userId: number) {
+        // make sure that users are found that contain part of the fullname
+        // and exclude the current user
+        return this.prisma.user.findMany({
+            where: {
+                fullname: {
+                    contains: fullname,
+                },
+                id: {
+                    not: userId,
+                },
+            },
+        });
+    }
 }

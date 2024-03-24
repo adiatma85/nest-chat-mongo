@@ -27,6 +27,10 @@ const pubSub = new RedisPubSub({
 // Ngelanjut di sini nanti
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+      serveRoot: '/',
+    }),
     AuthModule,
     UserModule,
     GraphQLModule.forRootAsync({
