@@ -49,6 +49,7 @@ type Mutation {
 type Query {
   getChatroomsForUser(userId: Float!): [Chatroom!]!
   getMessagesForChatroom(chatroomId: Float!): [Message!]!
+  getUsersOfChatroom(chatroomId: Float!): [User!]!
   hello: String!
   searchUsers(fullname: String!): [User!]!
 }
