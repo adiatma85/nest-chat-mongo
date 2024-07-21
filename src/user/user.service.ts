@@ -1,74 +1,88 @@
 import { Injectable } from '@nestjs/common';
-import { User } from 'src/schema/user..schema';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { UserCreateDto, UserLoginDto, UserQueryDto, UserUpdateDto } from './dto/user.query.dto';
-import { UsersProfile } from './interfaces/user.interfaces';
-import { AllException, TransformError } from 'src/common/response.util';
+import { PrismaService } from 'src/prisma.service';
+import * as fs from 'fs';
+import { join } from 'path';
 
 @Injectable()
 export class UserService {
+    constructor(private readonly prisma: PrismaService) { }
 
-    constructor(
-        @InjectModel(User.name) private readonly userModel: Model<User>,
-    ) { }
+    async updateProfile(userId: number, fullname: string, avatarUrl: string) {
+        // If there are avatar Url in the updated version of user
+        if (avatarUrl) {
+            const oldUser = await this.prisma.user.findUnique({
+                where: { id: userId },
+            });
+            const updatedUser = await this.prisma.user.update({
+                where: { id: userId },
+                data: {
+                    fullname,
+                    avatarUrl,
+                },
+            });
 
-    public async create(userCreateDto: UserCreateDto): Promise<UsersProfile> {
-        try {
-            const newUser = await this.userModel.create(userCreateDto);
-            return newUser;
-        } catch (error) {
-            // Handle error
-            throw new Error('Failed to create user');
-        }
-    }
-
-    public async findAll(searchKeyword?: string): Promise<User[]> {
-        try {
-            const keyword = searchKeyword
-                ? {
-                    $or: [
-                        { name: { $regex: searchKeyword, $options: "i" } },
-                        { email: { $regex: searchKeyword, $options: "i" } },
-                    ],
+            if (oldUser.avatarUrl) {
+                const imageName = oldUser.avatarUrl.split('/').pop();
+                const imagePath = join(
+                    __dirname,
+                    '..',
+                    '..',
+                    'public',
+                    'images',
+                    imageName,
+                );
+                if (fs.existsSync(imagePath)) {
+                    fs.unlinkSync(imagePath);
                 }
-                : {};
-    
-            return await this.userModel.find(keyword).exec();
-        } catch (error) {
-            // Handle error
-            throw new AllException(TransformError(error));
+            }
+
+            return updatedUser;
         }
+
+        // If not
+        return await this.prisma.user.update({
+            where: { id: userId },
+            data: {
+                fullname,
+            },
+        });
     }
 
-    public async findOne(param: UserQueryDto) {
-        try {
-            const user = await this.userModel.findOne(param).exec();
-            return user;
-        } catch (error) {
-            // Handle error
-            throw new Error('Failed to find user');
-        }
+    async searchUsers(fullname: string, userId: number) {
+        // make sure that users are found that contain part of the fullname
+        // and exclude the current user
+        return this.prisma.user.findMany({
+            where: {
+                fullname: {
+                    contains: fullname,
+                },
+                id: {
+                    not: userId,
+                },
+            },
+        });
     }
 
-
-    public async update(param: UserQueryDto, userUpdateDto: UserUpdateDto) {
-        try {
-            const user = await this.userModel.updateMany(param, { $set: userUpdateDto });
-            return user;
-        } catch (error) {
-            // Handle error
-            throw new AllException(TransformError(error));
-        }
+    async getUsersOfChatroom(chatroomId: number) {
+        return this.prisma.user.findMany({
+            where: {
+                chatrooms: {
+                    some: {
+                        id: chatroomId,
+                    },
+                },
+            },
+            orderBy: {
+                createdAt: 'desc',
+            },
+        });
     }
 
-    public async delete(param: UserQueryDto) {
-        try {
-            const user = await this.userModel.deleteMany(param);
-            return user;
-        } catch (error) {
-            // Handle error
-            throw new AllException(TransformError(error));
-        }
+    async getUser(userId: number) {
+        return this.prisma.user.findUnique({
+            where: {
+                id: userId,
+            },
+        });
     }
 }

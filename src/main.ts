@@ -1,44 +1,50 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { AddContextAttribute } from './middleware/context.interceptor';
-import { HttpExceptionFilter } from './response/response.failed.filter';
-import { ResponseInterceptor } from './response/response.success.interceptor';
+import * as cookieParser from 'cookie-parser';
+import * as graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.js';
+import { BadRequestException, ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
-    logger: ['log', 'error', 'warn', 'debug', 'verbose'],
+  const app = await NestFactory.create(AppModule);
+
+  // Enable cors
+  app.enableCors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+    // all headers that client are allowed to use
+    allowedHeaders: [
+      'Accept',
+      'Authorization',
+      'Content-Type',
+      'X-Requested-With',
+      'apollo-require-preflight',
+    ],
+    methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
   });
 
+  // Enable Cookie Parser
+  app.use(cookieParser());
 
-  // Enabling cors
-  app.enableCors();
+  // Enable GraphqlUploadExpress
+  app.use(graphqlUploadExpress({ maxFileSize: 10000000000, maxFiles: 1 }));
 
-  // Enabling global prefix
-  app.setGlobalPrefix('api');
+  // Enable Global Pipe
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      exceptionFactory: (errors) => {
+        const formattedErrors = errors.reduce((accumulator, error) => {
+          accumulator[error.property] = Object.values(error.constraints).join(
+            ', ',
+          );
+          return accumulator;
+        }, {});
 
-  // Enable global filter for http exception filter
-  app.useGlobalFilters(new HttpExceptionFilter())
-
-  // Enabling context interceptor
-  app.useGlobalInterceptors(
-    new AddContextAttribute(),
-    new ResponseInterceptor()
+        throw new BadRequestException(formattedErrors);
+      },
+    }),
   );
-
-  // Swagger setup
-  const config = new DocumentBuilder()
-    .setTitle('API')
-    .setDescription('The API description')
-    .setVersion('1.0')
-    .addBearerAuth()
-    .addTag('auth')
-    .addTag('chat')
-    .addTag('users')
-    .addTag('ptesting')
-    .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/doc', app, document);
 
   const port = process.env.PORT || 5000;
   await app.listen(port);
